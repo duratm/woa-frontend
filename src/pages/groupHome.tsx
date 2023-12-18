@@ -160,13 +160,10 @@ function GroupHome() {
           <div className={classNames(selected ? "hidden md:flex md:w-1/3" : "")}>
             <Outlet/>
           </div>
-          <div className="absolute w-full -inset-y-screen">
-            <button className="flex flex-row items-center justify-center w-1/2 h-20 rounded-3xl bg-secondary">New
-              expense
-            </button>
+          <div className="absolute inset-x-0 bottom-0">
+            <button className="h-20 w-full text-center items-center">New expense</button>
           </div>
         </div>
-
         <BorrowedList open={openBorrowed} setOpen={setOpenBorrowed} expenses={group.expenses}/>
         <LentList open={openLent} setOpen={setOpenLent} expenses={group.expenses}/>
 
