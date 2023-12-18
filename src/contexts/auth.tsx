@@ -4,7 +4,7 @@ export const AuthContext = createContext({
   user: {
     username: "",
     email: "",
-    avatarUrl: "",
+    avatar_url: "",
     id: 0,
     isAuth: false,
   },
@@ -12,13 +12,14 @@ export const AuthContext = createContext({
   },
 })
 
-export const defaultUser = {username: "", email: "", avatarUrl: "", id: 0, isAuth: false}
+export const defaultUser = {username: "", email: "", avatar_url: "", id: 0, isAuth: false}
 
 export default function AuthProvider({children}: PropsWithChildren<{}>) {
   const [user, setUser] = useState(defaultUser)
   useEffect(() => {
     async function getUser() {
       const user = await hasAuthenticated()
+      console.log(user)
       setUser(user)
       if (user.email !== "") {
         setUser({...user, isAuth: true})

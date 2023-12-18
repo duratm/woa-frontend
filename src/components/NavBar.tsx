@@ -34,7 +34,7 @@ const NavBar = () => {
       {},
       {withCredentials: true}
     ).then(() => {
-      setUser({username: "", avatarUrl: "", email: "", isAuth: false})
+      setUser({username: "", avatar_url: "", email: "", isAuth: false})
     }).catch((error: any) => {
       console.log(error);
     });
@@ -69,7 +69,7 @@ const NavBar = () => {
             <span className="sr-only">Open user menu</span>
             <img
               className="h-8 w-8 rounded-full"
-              src={user.avatarUrl}
+              src={user.avatar_url}
               alt=""/>
           </Menu.Button>
         </div>
