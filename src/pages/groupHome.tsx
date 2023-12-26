@@ -37,7 +37,7 @@ function GroupHome() {
   }, []);
   const init = () => {
     if (groupUsers[0].username === "") {
-      fetch(import.meta.env.VITE_API_ENDPOINT + '/groups/show/users/' + params.id, {
+      fetch(import.meta.env.VITE_API_ENDPOINT + '/api/groups/show/users/' + params.id, {
           credentials: "include",
           method: "GET",
         }
@@ -51,7 +51,7 @@ function GroupHome() {
         setErrors(error.response?.data?.error);
       });
     }else{
-      fetch(import.meta.env.VITE_API_ENDPOINT + '/groups/show/' + params.id, {
+      fetch(import.meta.env.VITE_API_ENDPOINT + '/api/groups/show/' + params.id, {
           credentials: "include",
           method: "GET",
         }
@@ -105,7 +105,7 @@ function GroupHome() {
 
   return (
     <div className="from-primary to-tertiary bg-gradient-to-bl h-screen overflow-y-scroll">
-      <div className="flex sm:flex-auto flex-col sm:flex-row h-full pt-20 pb-15 overflow-x-scroll">
+      <div className="flex sm:flex-auto flex-col sm:flex-row h-full pt-20 pb-10 overflow-x-scroll">
         <div className="flex flex-col m-2 w-full overflow-x-scroll pr-2">
           <h1 className="sm:text-5xl text-2xl font-semibold w-fit mb-4 flex flex-row items-center"><Link
             to="/"><ArrowLeftCircleIcon className="h-20"/></Link>Group {group.name}</h1>

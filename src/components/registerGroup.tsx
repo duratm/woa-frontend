@@ -17,7 +17,7 @@ function RegisterGroup({open, setOpen}: Readonly<{
     init()
   }, [""]);
   let init = () => {
-    fetch(import.meta.env.VITE_API_ENDPOINT + '/users/all', {method: 'POST', credentials: 'include'}
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/users', {method: 'GET', credentials: 'include'}
     ).then(res => res.json()
     ).then(data => {
       console.log(data);
@@ -37,7 +37,7 @@ function RegisterGroup({open, setOpen}: Readonly<{
     const target = e.target as typeof e.target & {
       name: { value: string };
     };
-    fetch(import.meta.env.VITE_API_ENDPOINT + '/groups/create',
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/groups',
       {
         method: 'POST',
         credentials: 'include',
@@ -46,7 +46,8 @@ function RegisterGroup({open, setOpen}: Readonly<{
     ).then(res => res.json()
     ).then(data => {
       console.log(data);
-      navigate("/home");
+      navigate("/");
+      setOpen(false);
     }).catch((error) => {
       console.log(error);
       setErrors(error.response?.data?.error);
@@ -167,7 +168,7 @@ function RegisterGroup({open, setOpen}: Readonly<{
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                className="relative transform rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <form onSubmit={handleSubmit} method="post"
                       className="mx-auto max-w-xl mt-4">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">

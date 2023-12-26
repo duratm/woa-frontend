@@ -19,9 +19,8 @@ export default function Login() {
       email: { value: string };
       password: { value: string };
     };
-    axios.post(
-      import.meta.env.VITE_API_ENDPOINT + '/login',
-      target,
+    axios.get(
+      import.meta.env.VITE_API_ENDPOINT + '/auth'+`?email=${target.email.value}&password=${target.password.value}`,
       {withCredentials: true}
     ).then((response) => {
       console.log(response)

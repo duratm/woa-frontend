@@ -29,9 +29,8 @@ const NavBar = () => {
   const {user, setUser} = useContext(AuthContext);
 
   function logout() {
-    axios.post(
-      import.meta.env.VITE_API_ENDPOINT + '/logout',
-      {},
+    axios.get(
+      import.meta.env.VITE_API_ENDPOINT + '/auth/me/logout',
       {withCredentials: true}
     ).then(() => {
       setUser({username: "", avatar_url: "", email: "", isAuth: false})

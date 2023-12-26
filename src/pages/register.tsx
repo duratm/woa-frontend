@@ -38,7 +38,7 @@ function Register() {
       avatarUrl: avatarURL
     }
     axios.post(
-      import.meta.env.VITE_API_ENDPOINT + '/register',
+      import.meta.env.VITE_API_ENDPOINT + '/auth',
       data,
       {withCredentials: true}
     ).then((response) => {

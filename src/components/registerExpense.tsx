@@ -25,7 +25,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
     init()
   }, [""]);
   let init = () => {
-    fetch(import.meta.env.VITE_API_ENDPOINT + '/users/all', {method: 'POST', credentials: 'include'}
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/users', {method: 'GET', credentials: 'include'}
     ).then(res => res.json()
     ).then(data => {
       console.log(data);
@@ -46,9 +46,9 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
       name: { value: string };
 
     };
-    fetch(import.meta.env.VITE_API_ENDPOINT + '/groups/expense/create',
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/expenses',
       {
-        method: 'PUT',
+        method: 'POST',
         credentials: 'include',
         body: JSON.stringify({groupId: group.id, name: target.name.value, users: selectedUsers.map(item => {return {id: item.id, amount: item.amount}})})
       }

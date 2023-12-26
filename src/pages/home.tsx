@@ -14,7 +14,7 @@ function Home() {
   const {user} = useContext(AuthContext);
 
   let init = () => {
-    fetch(import.meta.env.VITE_API_ENDPOINT+'/groups', {method: 'POST', credentials: 'include'}
+    fetch(import.meta.env.VITE_API_ENDPOINT+'/api/groups', {method: 'GET', credentials: 'include'}
     ).then(res => res.json()
     ).then(data => {
       console.log(data);
