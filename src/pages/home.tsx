@@ -2,9 +2,11 @@ import React, {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import GroupUsers from "../contexts/groupUsers.ts";
 import {AuthContext} from "../contexts/auth.tsx";
+import RegisterGroup from "../components/registerGroup.tsx";
 
 function Home() {
   const [errors, setErrors] = useState("");
+  const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [groups, setGroups] = useState([{id: 0, name: "", users: [{id: 0, username: "", avatar_url: ""}]}]);
   const {setGroupUsers} = useContext(GroupUsers)
   useEffect(() => {
@@ -35,7 +37,7 @@ function Home() {
   return (
     <>
       <div className="from-primary to-tertiary bg-gradient-to-bl h-screen overflow-hidden">
-        <div className="flex flex-col items-center h-full mt-20 overflow-y-scroll pb-20">
+        <div className="flex flex-col items-center h-full mt-20 overflow-y-scroll pb-10">
           {groups.map(group =>
             <button key={group.id} onClick={display(group.id)}
                     className="flex p-6 justify-between sm:rounded-3xl w-full bg-primary hover:bg-secondary sm:w-3/4 mb-2 sm:py-5 sm:mt-5 sm:mb-5 h-min shadow-xl">
@@ -57,8 +59,15 @@ function Home() {
               </div>
             </button>)}
         </div>
+        <div className="absolute inset-x-0 bottom-0">
+          <button className="h-20 w-full text-center items-center bg-secondary" onClick={() => {
+            setOpenCreateGroup(true)
+          }}>New Group
+          </button>
+        </div>
       </div>
       <p>{errors}</p>
+      <RegisterGroup open={openCreateGroup} setOpen={setOpenCreateGroup} setGroups={setGroups} groups={groups}/>
     </>
   )
 }

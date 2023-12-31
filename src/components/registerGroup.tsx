@@ -1,16 +1,16 @@
 import React, {Fragment, useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import {Dialog, Listbox, Transition} from '@headlessui/react'
 import {CheckIcon} from '@heroicons/react/20/solid'
 
-function RegisterGroup({open, setOpen}: Readonly<{
+function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setGroups: React.Dispatch<React.SetStateAction<{ id: number; name: string; users: { id: number; username: string; avatar_url: string; }[]; }[]>>
+  groups: { id: number; name: string; users: { id: number; username: string; avatar_url: string; }[]; }[]
 }>) {
   const [errors, setErrors] = useState("");
   const [users, setUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
   const [selected, setSelected] = useState(users[0])
-  const navigate = useNavigate();
   const [selectedUsers, setSelectedUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
   const cancelButtonRef = useRef(null)
   useEffect(() => {
@@ -46,7 +46,8 @@ function RegisterGroup({open, setOpen}: Readonly<{
     ).then(res => res.json()
     ).then(data => {
       console.log(data);
-      navigate("/");
+      data.users = selectedUsers;
+      setGroups([...groups, data]);
       setOpen(false);
     }).catch((error) => {
       console.log(error);
@@ -87,9 +88,9 @@ function RegisterGroup({open, setOpen}: Readonly<{
           <Listbox.Button
             className="block w-full bg-white rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         <span className="block truncate h-6"><div className="flex flex-wrap">
-                            <img src={selected.avatar_url} alt="pdp"
+                            <img src={selected?.avatar_url} alt="pdp"
                                  className="w-6 h-6 rounded-full mr-2"/>
-                          {selected.username}
+                          {selected?.username}
                             </div>
                         </span>
           </Listbox.Button>
@@ -187,7 +188,6 @@ function RegisterGroup({open, setOpen}: Readonly<{
                           <label
                             className="block text-sm font-semibold leading-6 text-gray-900">
                             Users:
-                          </label>
                           <div className="relative rounded-md shadow-sm">
                             {userList()}
                             <div className="absolute inset-y-0 right-0 flex items-center">
@@ -196,6 +196,7 @@ function RegisterGroup({open, setOpen}: Readonly<{
                                      value="Add"/>
                             </div>
                           </div>
+                          </label>
                           {displayUsers()}
 
                         </div>

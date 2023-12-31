@@ -3,7 +3,6 @@ import {Bars3Icon, XMarkIcon} from "@heroicons/react/24/outline";
 import {Fragment, useContext, useState} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
-import RegisterGroup from "./registerGroup.tsx";
 import {AuthContext} from "../contexts/auth.tsx";
 
 function classNames(...classes: string[]) {
@@ -15,12 +14,11 @@ const NavBar = () => {
     currentNavStyle: "bg-secondary text-quaternary rounded-md px-3 py-2 text-sm font-medium",
     navStyle: "text-tertiary hover:bg-quaternary hover:text-white rounded-md px-3 py-2 text-sm font-medium"
   }
-  const [open, setOpen] = useState(false)
   const mobileStyle = {
     currentNavStyle: "bg-secondary text-quaternary block rounded-md px-3 py-2 text-base font-medium",
     navStyle: "text-tertiary hover:bg-quaternary hover:text-white block rounded-md px-3 py-2 text-base font-medium"
   }
-  const navItems = [{name: "Create Group", link: ""}]
+  const navItems: any[] = []
   const profileItems = [{name: "Profile", link: "/profile"}, {name: "Settings", link: "/settings"}, {
     name: "Logout",
     link: "/logout"
@@ -46,14 +44,12 @@ const NavBar = () => {
                        className={currentNav === item.name ? computerStyle["currentNavStyle"] : computerStyle["navStyle"]}
                        onClick={() => {
                          setCurrentNav(item.name)
-                         setOpen(true)
                        }}>{item.name}</button>
       }
       return <button key={item.name}
                      className={currentNav === item.name ? mobileStyle["currentNavStyle"] : mobileStyle["navStyle"]}
                      onClick={() => {
                        setCurrentNav(item.name)
-                       setOpen(true)
                      }}>{item.name}</button>
     })
   }
@@ -166,7 +162,6 @@ const NavBar = () => {
             </>
           )}
         </Disclosure>
-        <RegisterGroup open={open} setOpen={setOpen}/>
       </>
     )
   }

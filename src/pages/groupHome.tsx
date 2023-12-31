@@ -115,11 +115,11 @@ function GroupHome() {
               <img src={currentUser.avatar_url} alt={currentUser.username} className="w-20 h-20 rounded-full"/>
               <p>{currentUser.username}</p>
               {user.id === currentUser.id ? displayButtons() : <></>}
-              {displayTotal(currentUser.id)}
+              {group.expenses.length > 0 ? displayTotal(currentUser.id) : <>0</>}
             </div>
           </article>)}
 
-          {group.expenses.map((expense) =>
+          {group.expenses.length > 0 ? group.expenses.map((expense) =>
             <button onClickCapture={() => {
               clickExpense(expense)
             }} key={expense.id}>
@@ -155,7 +155,7 @@ function GroupHome() {
               </div>
               {displayOrNotLittle(expense.id)}
             </button>
-          )}
+          ) : <></>}
 
         </div>
         <div className={classNames(selected ? "hidden md:flex md:w-1/3" : "")}>
