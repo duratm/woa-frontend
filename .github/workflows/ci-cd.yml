@@ -22,5 +22,5 @@ jobs:
           tags: |
             duratm/pycount-frontend:dev
             duratm/pycount-frontend:${{ github.sha }}
-            cache-from: type=gha
-            cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
