@@ -22,9 +22,9 @@ spec:
     spec:
       containers:
         - name: pycount-frontend
-          image: pycount-frontend:dev
+          image: duratm/pycount-frontend:dev
           ports:
-            - name: pycount-frontend
+            - name: pycount
               containerPort: 80
 ---
 apiVersion: v1
