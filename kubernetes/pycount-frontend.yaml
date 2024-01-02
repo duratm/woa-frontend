@@ -23,8 +23,9 @@ spec:
       containers:
         - name: pycount-frontend
           image: duratm/pycount-frontend:dev
+          imagePullPolicy: "Always"
           ports:
-            - name: pycount
+            - name: frontend
               containerPort: 80
 ---
 apiVersion: v1
@@ -54,7 +55,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /test
+          - path: /
             pathType: Prefix
             backend:
               service:
