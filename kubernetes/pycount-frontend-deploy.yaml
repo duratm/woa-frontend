@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pycount-frontend-deploy
+  namespace: pycount
+  labels:
+    app: pycount-frontend
+spec:
+  selector:
+    matchLabels:
+      app: pycount-frontend
+  template:
+    metadata:
+      labels:
+        app: pycount-frontend
+    spec:
+      containers:
+        - name: pycount-frontend
+          image: duratm/pycount-frontend:dev
+          imagePullPolicy: "Always"
+          ports:
+            - name: frontend
+              containerPort: 80
