@@ -12,14 +12,8 @@ function Register() {
   const onAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       if (event.target.files[0]) {
-        const reader = new FileReader();
-        reader.readAsDataURL(event.target.files[0])
-        reader.onloadend = () => {
-          setAvatarURL(reader.result as string)
-          console.log(reader.result)
-        }
-
-        //setAvatarURL(URL.createObjectURL(event.target.files[0]));
+        console.log(event.target.files[0])
+        setAvatarURL(URL.createObjectURL(event.target.files[0]))
       }
     }
   }
