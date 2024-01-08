@@ -26,7 +26,7 @@ export default function Login() {
       console.log(response)
       setUser({
         username: response.data.username,
-        avatarUrl: response.data.avatar_url,
+        avatar_url: response.data.avatar_url,
         id: response.data.id,
         email: response.data.email,
         isAuth: true

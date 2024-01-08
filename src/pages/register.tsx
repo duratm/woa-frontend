@@ -30,16 +30,11 @@ function Register() {
       email: { value: string };
       username: { value: string };
       password: { value: string };
+      avatarUrl: {value: File};
     };
-    const data = {
-      email: target.email.value,
-      username: target.username.value,
-      password: target.password.value,
-      avatarUrl: avatarURL
-    }
     axios.post(
       import.meta.env.VITE_API_ENDPOINT + '/auth',
-      data,
+      target,
       {withCredentials: true}
     ).then((response) => {
       setUser({
