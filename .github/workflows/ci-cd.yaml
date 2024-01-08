@@ -21,29 +21,5 @@ jobs:
           push: true
           tags: |
             duratm/pycount-frontend:dev
-            duratm/pycount-frontend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  deploy:
-    name: Deploy
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v3
-        with:
-          method: service-account
-          k8s-url: https://162.38.112.138:6443
-          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Deploy to the Kubernetes cluster
-        uses: azure/k8s-deploy@v4
-        with:
-          namespace: default
-          manifests: |
-            kubernetes/pycount-frontend.yaml
-          images: |
-            duratm/pycount-frontend:${{ github.sha }}
