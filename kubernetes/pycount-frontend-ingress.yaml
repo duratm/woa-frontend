@@ -16,3 +16,4 @@ spec:
                 name: pycount-frontend-svc
                 port:
                   number: 80
+      host: duratm.com
