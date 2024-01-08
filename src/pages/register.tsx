@@ -48,7 +48,7 @@ function Register() {
         email: response.data.email,
         isAuth: true
       });
-      navigate("/home");
+      navigate("/");
     }).catch((error) => {
       console.log(error);
       setErrors(error.response?.data?.error);

@@ -31,7 +31,7 @@ export default function Login() {
         email: response.data.email,
         isAuth: true
       });
-      navigate("/home");
+      navigate("/");
     }).catch((error) => {
       setMessage(error.response?.data?.error);
     });
