@@ -3,7 +3,7 @@ import {Bars3Icon, XMarkIcon} from "@heroicons/react/24/outline";
 import {Fragment, useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
-import {AuthContext, defaultUser} from "../contexts/auth.tsx";
+import {AuthContext} from "../contexts/auth.tsx";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -27,13 +27,14 @@ const NavBar = () => {
   const {user, setUser} = useContext(AuthContext);
   const navigate = useNavigate();
   useEffect(() => {
-    init()
-  }, [""]);
-  const init = () => {
-    if (user === defaultUser) {
-      navigate("/login")
+    if (!user.isAuth) {
+      navigate("/login");
+    } else {
+      navigate("/")
     }
-  }
+
+  }, [user.isAuth]);
+
   function logout() {
     axios.get(
       import.meta.env.VITE_API_ENDPOINT + '/auth/me/logout',

@@ -1,6 +1,7 @@
-import React, {Fragment, useEffect, useRef, useState} from "react";
+import React, {Fragment, useContext, useEffect, useRef, useState} from "react";
 import {Dialog, Listbox, Transition} from '@headlessui/react'
 import {CheckIcon} from '@heroicons/react/20/solid'
+import {AuthContext} from "../contexts/auth.tsx";
 
 function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
   open: boolean,
@@ -9,6 +10,7 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
   groups: { id: number; name: string; users: { id: number; username: string; avatar_url: string; }[]; }[]
 }>) {
   const [errors, setErrors] = useState("");
+  const {user} = useContext(AuthContext);
   const [users, setUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
   const [selected, setSelected] = useState(users[0])
   const [selectedUsers, setSelectedUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
@@ -47,6 +49,7 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
     ).then(data => {
       console.log(data);
       data.users = selectedUsers;
+      data.users = [...data.users, user]
       setGroups([...groups, data]);
       setOpen(false);
     }).catch((error) => {
