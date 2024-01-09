@@ -6,6 +6,9 @@ WORKDIR /usr/app
 
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH /usr/app/node_modules/.bin:$PATH
+ARG VITE_API_ENDPOINT
+
+ENV VITE_API_ENDPOINT $VITE_API_ENDPOINT
 
 # install app dependencies
 COPY package.json .
