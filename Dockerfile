@@ -1,5 +1,5 @@
 # pull official base image
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
 # set working directory
 WORKDIR /app
@@ -8,13 +8,21 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --silent
-RUN npm install react-scripts@3.4.1 -g --silent
+COPY package.json .
+COPY package-lock.json .
+RUN npm install --immutable
 
 # add app
-COPY . ./
+COPY . .
 
+RUN npm run build
+
+FROM nginxinc/nginx-unprivileged:alpine3.18
+
+RUN rm -rf /etc/nginnx/html/*
+COPY --from=builder --chown=nginx:nginx /app/dist/* /etc/nginx/html
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 3333
 # start app
-CMD ["vite"]
+CMD ["nginx", "-g", "daemon off;"]
