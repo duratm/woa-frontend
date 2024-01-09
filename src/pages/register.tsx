@@ -37,7 +37,7 @@ function Register() {
         email: response.data.email,
         isAuth: true
       });
-      navigate("/login");
+      navigate("/");
     }).catch((error) => {
       console.log(error);
       setErrors(error.response?.data?.error);
@@ -149,7 +149,7 @@ function Register() {
 
             <p className="mt-10 text-center text-sm text-gray-500">
               Already a member?{' '}
-              <Link to="/" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              <Link to="/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                 Login now
               </Link>
             </p>
