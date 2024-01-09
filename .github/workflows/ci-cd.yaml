@@ -19,6 +19,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
+          build-args: |
+            VITE_API_ENDPOINT=${{ secrets.VITE_API_ENDPOINT }}
           tags: |
             duratm/pycount-frontend:dev
           cache-from: type=gha
