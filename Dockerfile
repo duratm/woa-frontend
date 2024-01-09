@@ -1,11 +1,11 @@
 # pull official base image
-FROM node:18-alpine AS builder
+FROM node:18-alpine AS build
 
 # set working directory
-WORKDIR /app
+WORKDIR /usr/app
 
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH /usr/app/node_modules/.bin:$PATH
 
 # install app dependencies
 COPY package.json .
@@ -15,14 +15,15 @@ RUN npm install --immutable
 # add app
 COPY . .
 
+RUN npm ci
 RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:alpine3.18
 
-RUN rm -rf /etc/nginnx/html/*
-COPY --from=builder --chown=nginx:nginx /app/dist/* /etc/nginx/html
+RUN rm -rf /etc/nginx/html/*
+COPY --from=build --chown=nginx:nginx /usr/app/dist /etc/nginx/html
 COPY --chown=nginx:nginx nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 3333
+EXPOSE 80
 # start app
 CMD ["nginx", "-g", "daemon off;"]
