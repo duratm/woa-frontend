@@ -46,29 +46,6 @@ export default function Login() {
   const handleEmailValidation = (email: string) => {
     return isValidEmail(email);
   };
-  // const handleLogin = (e: React.SyntheticEvent) => {
-  //   e.preventDefault();
-  //   const target = e.target as typeof e.target & {
-  //     email: { value: string };
-  //     password: { value: string };
-  //   };
-  //   axios.get(
-  //     import.meta.env.VITE_API_ENDPOINT + '/auth'+`?email=${target.email.value}&password=${target.password.value}`,
-  //     {withCredentials: true}
-  //   ).then((response) => {
-  //     console.log(response)
-  //     setUser({
-  //       username: response.data.username,
-  //       avatar_url: response.data.avatar_url,
-  //       id: response.data.id,
-  //       email: response.data.email,
-  //       isAuth: true
-  //     });
-  //     navigate("/");
-  //   }).catch((error) => {
-  //     setMessage(error.response?.data?.error);
-  //   });
-  // };
 
   return (
     <div className="flex h-screen flex-1 flex-col justify-center from-primary to-tertiary bg-gradient-to-bl">
