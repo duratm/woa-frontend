@@ -20,7 +20,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
       id: number;
       name: string;
       lender_id: number;
-      borrowers: { id: number; amount: number; is_paid: number; }[];
+      borrowers: { id: number; amount: number; is_paid: boolean; }[];
     }[];
   }
   setGroup: React.Dispatch<React.SetStateAction<{

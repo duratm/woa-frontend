@@ -1,4 +1,4 @@
-export function groupAPI() {
+export function groupUserAPI() {
   return [{
     username: "",
     avatar_url: "",

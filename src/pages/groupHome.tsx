@@ -7,6 +7,7 @@ import BorrowedList from "../components/borrowedList.tsx";
 import LentList from "../components/lentList.tsx";
 import {AuthContext} from "../contexts/auth.tsx";
 import RegisterExpense from "../components/registerExpense.tsx";
+import Group from "../contexts/group.tsx";
 
 
 function classNames(...classes: string[]) {
@@ -21,20 +22,16 @@ function GroupHome() {
   const [openCreateExpense, setOpenCreateExpense] = useState(false);
   const [selected, setSelected] = useState(0);
   const {user} = useContext(AuthContext);
-  const [group, setGroup] = useState({
-    id: 0,
-    name: "",
-    expenses: [{id: 0, name: "", lender_id: 0, borrowers: [{id: 0, amount: 0, is_paid: 0}]}],
-  });
+  const {group, setGroup} = useContext(Group);
   const navigate = useNavigate();
-  function clickExpense(expense: { id: any; name?: string; lender_id?: number; is_paid?: boolean; borrowers?: { id: number; amount: number; is_paid: number; }[]; }) {
+  function clickExpense(expense: { id: number; name?: string; lender_id?: number; is_paid?: boolean; borrowers?: { id: number; amount: number; is_paid: boolean; }[]; }) {
     setSelected(expense.id);
-    navigate("expense/"+JSON.stringify(expense))
+    navigate("expense/"+expense.id)
   }
   const params = useParams();
   useEffect(() => {
     init()
-  }, []);
+  }, [""]);
   const init = () => {
     if (groupUsers[0].username === "") {
       fetch(import.meta.env.VITE_API_ENDPOINT + '/api/groups/show/users/' + params.id, {
@@ -57,8 +54,8 @@ function GroupHome() {
         }
       ).then(res => res.json()
       ).then(data => {
-        console.log(data);
         setGroup(data);
+        console.log(group);
       }).catch((error) => {
         console.log(errors);
         setErrors(error.response?.data?.error);

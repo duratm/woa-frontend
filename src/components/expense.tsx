@@ -1,11 +1,33 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useContext} from "react";
 import GroupUsers from "../contexts/groupUsers.ts";
+import {AuthContext} from "../contexts/auth.tsx";
+import Group from "../contexts/group.tsx";
 
 function Expense() {
   const {groupUsers} = useContext(GroupUsers)
+  const {group, setGroup} = useContext(Group)
   const params = useParams();
-  const expense: {name: string; lender_id: number; borrowers: [{amount:number; id:number; is_paid:boolean}]} = JSON.parse(params.expense as string)
+  const {user} = useContext(AuthContext)
+  const id = parseInt(params.id as string)
+  const expense: {id: number, name: string; lender_id: number; borrowers: {amount:number; id:number; is_paid:boolean}[]} = group.expenses.find((expense: { id: number; }) => expense.id === id)!;
+  const navigate = useNavigate();
+
+  function deleteExpense() {
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/expenses/' + expense.id,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    ).then(res => res
+    ).then(data => {
+      console.log(data);
+      setGroup({...group ,expenses: group.expenses.filter((expense: { id: number; }) => expense.id !== id)});
+      navigate("/groupHome/"+group.id)
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 
     return (
       <div className="w-full">
@@ -37,6 +59,7 @@ function Expense() {
             </div>
           )}
         </div>
+        {user.id === expense.lender_id && <button onClick={deleteExpense} className="bg-primary hover:bg-secondary rounded-xl p-2">Delete</button>}
       </div>
     )
 }

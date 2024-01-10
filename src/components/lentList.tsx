@@ -10,7 +10,7 @@ function LentList({open, setOpen, expenses}: Readonly<{
     id: any;
     name: string;
     lender_id: number;
-    borrowers: { id: number; amount: number; is_paid: number; }[];
+    borrowers: { id: number; amount: number; is_paid: boolean; }[];
   }[]
 }>) {
   const {user} = useContext(AuthContext);
@@ -21,7 +21,7 @@ function LentList({open, setOpen, expenses}: Readonly<{
     id: any;
     name: string;
     lender_id: number;
-    borrowers: { id: number; amount: number; is_paid: number; }[];
+    borrowers: { id: number; amount: number; is_paid: boolean; }[];
   }[]) {
     return (
       <>
@@ -55,7 +55,7 @@ function LentList({open, setOpen, expenses}: Readonly<{
     id: any;
     name: string;
     lender_id: number;
-    borrowers: { id: number; amount: number; is_paid: number; }[];
+    borrowers: { id: number; amount: number; is_paid: boolean; }[];
   }[]) {
     return (
       <>
