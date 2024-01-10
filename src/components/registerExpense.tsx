@@ -108,7 +108,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
   function userList() {
     return (
       <Listbox value={selected} onChange={setSelected}>
-        <div className="relative w-full ">
+        <div className="relative">
           <Listbox.Button
             className="block w-full bg-white rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                         <span className="block truncate h-6">{}
@@ -125,7 +125,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className="absolute max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+              className="absolute max-h-60 w-full rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
               {groupUsers.filter(person => person.id !== user.id).map((person) => (
                 <Listbox.Option
                   key={person.id}
@@ -193,7 +193,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                className="relative transform rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <form onSubmit={handleSubmit(onSubmit)} method="post"
                       className="mx-auto max-w-xl mt-4">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
