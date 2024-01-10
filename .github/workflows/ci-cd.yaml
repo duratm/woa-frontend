@@ -7,7 +7,7 @@ jobs:
     name: Calculate Version
     runs-on: ubuntu-latest
     outputs:
-      branchName: ${{ steps.gitversion.outputs.branchName }} # To use an output in another job, you have to map it to a job output.
+      semVer: ${{ steps.gitversion.outputs.semVer }}
     steps:
       # gitversion/execute step omitted for brevity
       - name: Checkout
@@ -60,7 +60,7 @@ jobs:
         uses: mikefarah/yq@v4
       - name: Update manifests
         run: |
-          yq eval -i '.spec.template.spec.containers[0].image = "duratm/pycount-frontend:${{ needs.build.outputs.semVer }}"' kubernetes/pycount-frontend-deploy.yaml
+          yq eval -i '.spec.template.spec.containers[0].image = "duratm/pycount-frontend:${{ needs.calculate-version.outputs.semVer }}"' kubernetes/pycount-frontend-deploy.yaml
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Action"
