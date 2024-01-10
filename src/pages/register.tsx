@@ -9,7 +9,7 @@ type FormValues = {
   email: string;
   username: string;
   password: string;
-  avatarUrl: File;
+  avatarUrl: FileList;
 };
 const isValidEmail = (email: string) =>
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
@@ -18,6 +18,7 @@ const isValidEmail = (email: string) =>
 
 function Register() {
   const navigate = useNavigate();
+  const [message, setMessage] = useState("");
   const [avatarURL, setAvatarURL] = useState("")
   const {setUser} = useContext(AuthContext);
   const {register, handleSubmit, formState: {errors}} = useForm<FormValues>();
@@ -42,15 +43,13 @@ function Register() {
   };
 
   const onAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      if (event.target.files[0]) {
-        console.log(event.target.files[0])
-        setAvatarURL(URL.createObjectURL(event.target.files[0]))
-      }
+    if ( event.target.files && validateImageFile(event.target.files)) {
+      setAvatarURL(URL.createObjectURL(event.target.files[0]))
     }
   };
   const handleEmailValidation = (email: string) => {
-    return isValidEmail(email);
+    console.log(errors)
+    return isValidEmail(email) && !errors.email;
   };
 
   const isStrongEnough = () => {
@@ -59,9 +58,10 @@ function Register() {
 
   const onSubmit :SubmitHandler<FormValues> = async (data) => {
     try {
+      const formData = {...data, avatarUrl: data.avatarUrl[0]}
       const response = await axios.post(
         `${import.meta.env.VITE_API_ENDPOINT}/auth`,
-        data,
+        formData,
         { withCredentials: true }
       );
       setUser({
@@ -71,17 +71,25 @@ function Register() {
         isAuth: true
       });
       navigate("/");
-    } catch (error) {
-      console.log(error);
+    } catch (error :any) {
+      setMessage(error.response?.data?.error === "email" ? "Email already used" : "Username already used") ;
     }
   };
+  const validateImageFile = (file: FileList) => {
+    if (!file[0]) return true;
+    if (file.length > 1) return false;
+    const acceptedImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    console.log(acceptedImageTypes.includes(file[0].type))
+    return acceptedImageTypes.includes(file[0].type); // Vérifie si le type du fichier est une image acceptée
+  };
+
   return (
     <div className="flex h-screen flex-1 flex-col justify-center from-primary to-tertiary bg-gradient-to-bl">
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md bg-primary rounded-xl p-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            src="logo.svg"
             alt="Your Company"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -103,7 +111,7 @@ function Register() {
                   {...register("email", { required: true, validate: handleEmailValidation })}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.email && <span className="text-red-500">Wrong email format</span>}
+                {errors.email && <span className="text-red-500">{errors.email.message ? errors.email.message : "Email on a good format is mandatory"}</span>}
               </div>
             </div>
 
@@ -119,7 +127,7 @@ function Register() {
                   {...register("username", { required: true })}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.username && <span className="text-red-500">Username is mandatory</span>}
+                {errors.username && <span className="text-red-500">{errors.username.message ? errors.username.message : "Email is mandatory"}</span>}
               </div>
             </div>
 
@@ -138,7 +146,7 @@ function Register() {
                   onChange={handlePasswordChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.username && <span className="text-red-500">Username is mandatory</span>}
+                {errors.password && <span className="text-red-500">{"Password is mandatory"}</span>}
                 <div className="mt-2 text-sm text-gray-600">
                   <div className={`strength-indicator bg-gray-200 rounded-sm h-2 mb-1`}>
                     <div
@@ -170,14 +178,16 @@ function Register() {
                       className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                     >
                       <span>Upload a file</span>
-                      <input id="avatarUrl" name="avatarUrl" type="file" className="sr-only"
-                             onChange={onAvatarChange}/>
+                      <input id="avatarUrl" type="file" className="sr-only"
+                             {...register("avatarUrl", { onChange: onAvatarChange, validate: validateImageFile })}/>
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
                   <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
                 </div>
               </div>
+              {errors.avatarUrl && <span className="text-red-500">Le fichier doit être une image (jpeg, png, gif).</span>}
+              {message !== "" && <span className="text-red-500">{message}</span>}
             </div>
 
             <div>
