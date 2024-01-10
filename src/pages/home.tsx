@@ -37,7 +37,7 @@ function Home() {
   return (
     <>
       <div className="from-primary to-tertiary bg-gradient-to-bl h-screen overflow-hidden">
-        <div className="flex flex-col items-center h-full mt-20 overflow-y-scroll pb-10">
+        <div className="flex flex-col items-center h-full mt-20 overflow-x-scroll pb-40">
           {groups.map(group =>
             <button key={group.id} onClick={display(group.id)}
                     className="flex p-6 justify-between sm:rounded-3xl w-full bg-primary hover:bg-secondary sm:w-3/4 mb-2 sm:py-5 sm:mt-5 sm:mb-5 h-min shadow-xl">
