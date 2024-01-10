@@ -1,8 +1,22 @@
 name: CI/CD
 
-on: push
+on:
+  push:
+    branches:
+      - develop
 
 jobs:
+  release-check:
+    name: Check Release Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if the commit contains 'release'
+        id: check-commit
+        run: echo ::set-output name=containsRelease::$(if (echo "${{ github.event.head_commit.message }}" | grep -q 'release'); then echo true; else echo false; fi)
+      - name: Abort if not 'release' in commit
+        if: steps.check-commit.outputs.containsRelease == 'false'
+        run: exit 78 # Exit with non-zero code to abort subsequent jobs
+
   calculate-version:
     name: Calculate Version
     runs-on: ubuntu-latest
@@ -11,7 +25,7 @@ jobs:
     steps:
       # gitversion/execute step omitted for brevity
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Install GitVersion
@@ -57,7 +71,13 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          ref: master
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "username@users.noreply.github.com"
+          git merge develop --ff-only
       - name: Install yq
         uses: mikefarah/yq@v4
       - name: Update manifests
@@ -65,8 +85,6 @@ jobs:
           yq eval -i '.spec.template.spec.containers[0].image = "duratm/pycount-frontend:${{ needs.build.outputs.semVer }}"' kubernetes/pycount-frontend-deploy.yaml
       - name: Commit and push changes
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "username@users.noreply.github.com"
           git add .
           git commit -m "Update manifests to version ${{ needs.build.outputs.semVer }}"
           git push
