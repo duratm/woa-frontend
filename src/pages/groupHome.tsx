@@ -115,7 +115,7 @@ function GroupHome() {
               <img src={currentUser.avatar_url} alt={currentUser.username} className="w-20 h-20 rounded-full"/>
               <p>{currentUser.username}</p>
               {user.id === currentUser.id ? displayButtons() : <></>}
-              {group.expenses.length > 0 ? displayTotal(currentUser.id) : <>0</>}
+              {group.expenses.length > 0 ? displayTotal(currentUser.id) : <>0 </>}
             </div>
           </article>)}
 
@@ -170,7 +170,7 @@ function GroupHome() {
       </div>
       <BorrowedList open={openBorrowed} setOpen={setOpenBorrowed} expenses={group.expenses}/>
       <LentList open={openLent} setOpen={setOpenLent} expenses={group.expenses}/>
-      <RegisterExpense open={openCreateExpense} setOpen={setOpenCreateExpense} group={group} setGroup={setGroup} />
+      <RegisterExpense open={openCreateExpense} setOpen={setOpenCreateExpense} group={group} setGroup={setGroup}/>
 
     </div>
   )

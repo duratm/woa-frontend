@@ -1,122 +1,121 @@
-import React, {Fragment, useEffect, useRef, useState} from "react";
+import React, {Fragment, useContext, useRef, useState} from "react";
 import {Dialog, Listbox, Transition} from '@headlessui/react'
 import {CheckIcon, TrashIcon} from '@heroicons/react/20/solid'
+import GroupUsers from "../contexts/groupUsers.ts";
+import {AuthContext} from "../contexts/auth.tsx";
+import {SubmitHandler, useFieldArray, useForm} from "react-hook-form";
+
+type FormValues = {
+  name: string;
+  users: {userId: number, username: string, avatar_url: string, amount: number}[];
+};
+
 function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
   group: {
     id: number;
     name: string;
-    expenses: { id: number; name: string; lender_id: number; borrowers: { id: number; amount: number; is_paid: number; }[]; }[];
+    expenses: {
+      id: number;
+      name: string;
+      lender_id: number;
+      borrowers: { id: number; amount: number; is_paid: number; }[];
+    }[];
   }
   setGroup: React.Dispatch<React.SetStateAction<{
     id: number;
     name: string;
-    expenses: { id: number; name: string; lender_id: number; borrowers: { id: number; amount: number; is_paid: number; }[]; }[];
+    expenses: {
+      id: number;
+      name: string;
+      lender_id: number;
+      borrowers: { id: number; amount: number; is_paid: number; }[];
+    }[];
   }>>
 }>) {
-  const [errors, setErrors] = useState("");
-  const [users, setUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
-  const [selected, setSelected] = useState(users[0]);
-  const [selectedUsers, setSelectedUsers] = useState([{id: 0, username: "", avatar_url: "", amount: 0}]);
+  const {groupUsers} = useContext(GroupUsers);
+  const {user} = useContext(AuthContext);
+  const [selected, setSelected] = useState({id: -1, username: "", avatar_url: "", amount: 0});
   const cancelButtonRef = useRef(null)
+  const { control, register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "users",
+    rules: {
+      required: "Please add at least one user"
+    }
+  });
 
-  useEffect(() => {
-    init()
-  }, [""]);
-  let init = () => {
-    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/users', {method: 'GET', credentials: 'include'}
-    ).then(res => res.json()
-    ).then(data => {
-      console.log(data);
-      setUsers(data);
-      setSelected(data[0]);
-      setSelectedUsers(selectedUsers.filter(item => item.id !== 0));
-    }).catch((error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-      }
-      console.log(errors);
-      setErrors(error.response?.data?.error);
-    });
-  }
-  let handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-
-    };
+  const onSubmit: SubmitHandler<FormValues> = (data) =>  {
+    console.log(data);
     fetch(import.meta.env.VITE_API_ENDPOINT + '/api/expenses',
       {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({groupId: group.id, name: target.name.value, users: selectedUsers.map(item => {return {id: item.id, amount: item.amount}})})
+        body: JSON.stringify({
+          groupId: group.id, name: data.name, users: data.users.map(item => {
+            return {id: item.userId, amount: item.amount}
+          })
+        })
       }
     ).then(res => res.json()
-    ).then(data => {
+    ).then(resData => {
+      console.log("important");
       console.log(data);
-      data.borrowers = selectedUsers.map(item => {return {id: item.id, amount: item.amount, is_paid: false}})
-      setGroup({...group, expenses: [...group.expenses, data]})
+      resData.borrowers = data.users.map(item => {
+        return {id: item.userId, amount: item.amount, is_paid: false}
+      })
+      setGroup({...group, expenses: [...group.expenses, resData]})
       console.log(group);
       setOpen(false);
     }).catch((error) => {
       console.log(error);
-      setErrors(error.response?.data?.error);
     });
   }
 
-  function removeUser(id: number) {
-    setSelectedUsers(selectedUsers.filter(item => item.id !== id));
-  }
-
-  function handleChange() {
-    return (e: React.SyntheticEvent) => {
-      const target = e.target as typeof e.target & {
-        value: string;
-        name: string;
-      };
-      setSelectedUsers(selectedUsers.map(item => {
-        if (item.id === parseInt(target.name)) {
-          return {...item, amount: parseInt(target.value)};
-        }
-        return item;
-      }));
-    }
-  }
   function displayUsers() {
-    if (selectedUsers.length === 0) return (<></>);
-    return (
-      <div className="flex flex-col w-full">
-        {selectedUsers.map(user =>
-          <div key={user.id} className="flex flex-row items-center w-full justify-between m-2">
-            <img src={user.avatar_url} alt={user.username} className="w-10 h-10 rounded-full"/>
-            <p>{user.username}</p>
-            <input className="border-2 border-secondary rounded" name={user.id+""} placeholder="Amount" onInput={handleChange()}/>
-            <button onClick={() => removeUser(user.id)}><TrashIcon className="w-8 text-red-500"/></button>
-          </div>
-        )}
-      </div>
-    )
+    return <div className="flex flex-col w-full">
+      {fields.map((user, index) =>
+        <div key={user.id} className="flex flex-row items-center w-full justify-between m-2">
+          <img src={user.avatar_url} alt={user.username} className="w-10 h-10 rounded-full"/>
+          <p className="w-full">{user.username}</p>
+          <input
+            className={errors?.users?.[index]?.amount ? "block w-1/4 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-red-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" : "block w-1/4 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
+            type="number"
+            placeholder="Amount"
+            {...register(`users.${index}.amount` , { required: true, valueAsNumber: true, min: 1 })}
+          />
+
+          <button onClick={() => remove(index)}><TrashIcon className="w-8 text-red-500"/></button>
+        </div>
+      )}
+      {errors.users && fields.length > 0 && (
+        <span className="text-red-500">Amounts must be greater than 1</span>
+      )}
+    </div>
   }
 
   function addUser() {
-    if (selectedUsers.find(item => item.id === selected.id) === undefined) {
-      const select = {...selected, amount: 0}
-      setSelectedUsers([...selectedUsers, select]);
+    console.log(selected)
+    if (fields.find(item => item.userId === selected.id) === undefined && selected.id !== -1) {
+      const select = {username: selected.username, avatar_url: selected.avatar_url, userId: selected.id, amount: 0}
+      append(select);
+      console.log(fields);
     }
   }
 
   function userList() {
     return (
       <Listbox value={selected} onChange={setSelected}>
-        <div className="relative">
+        <div className="relative w-full ">
           <Listbox.Button
             className="block w-full bg-white rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        <span className="block truncate h-6"><div className="flex flex-wrap">
-                            <img src={selected.avatar_url} alt="pdp"
-                                 className="w-6 h-6 rounded-full mr-2"/>
-                          {selected.username}
-                            </div>
+                        <span className="block truncate h-6">{}
+                          {selected.id !== -1 ? <div className="flex flex-wrap">
+                              <img src={selected.avatar_url} alt="pdp" className="w-6 h-6 rounded-full mr-2"/>
+                              {selected.username}</div>
+                            : <></>}
                         </span>
           </Listbox.Button>
           <Transition
@@ -127,7 +126,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
           >
             <Listbox.Options
               className="absolute max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-              {users.map((person) => (
+              {groupUsers.filter(person => person.id !== user.id).map((person) => (
                 <Listbox.Option
                   key={person.id}
                   className={({active}) =>
@@ -195,7 +194,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
             >
               <Dialog.Panel
                 className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <form onSubmit={handleSubmit} method="post"
+                <form onSubmit={handleSubmit(onSubmit)} method="post"
                       className="mx-auto max-w-xl mt-4">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
@@ -207,21 +206,25 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
                           <label
                             className="block tsext-sm font-semibold leading-6 text-gray-900 ">
                             Name:{' '}
-                            <input type="text" name="name"
+                            <input type="text"
+                                   {...register("name", { required: true })}
                                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                           </label>
+                          {errors.name && <span className="text-red-500">A name is required</span>}
                           <label
                             className="block text-sm font-semibold leading-6 text-gray-900">
                             Users:
-                          </label>
                           <div className="relative rounded-md shadow-sm">
                             {userList()}
                             <div className="absolute inset-y-0 right-0 flex items-center">
-                              <input type={'button'} onClick={addUser}
-                                     className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 hover:bg-gray-100"
-                                     value="Add"/>
+                              <button type="button"
+                                     onClick={addUser}
+                                     className="block w-fit rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 hover:bg-gray-100"
+                                     >Add</button>
                             </div>
                           </div>
+                          </label>
+                          {errors.users && fields.length < 1 && <span className="text-red-500">A minimum of 1 user should be selected</span>}
                           {displayUsers()}
 
                         </div>

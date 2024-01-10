@@ -2,6 +2,12 @@ import React, {Fragment, useContext, useEffect, useRef, useState} from "react";
 import {Dialog, Listbox, Transition} from '@headlessui/react'
 import {CheckIcon} from '@heroicons/react/20/solid'
 import {AuthContext} from "../contexts/auth.tsx";
+import {SubmitHandler, useForm} from "react-hook-form";
+
+type FormValues = {
+  name: string;
+  users: string;
+};
 
 function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
   open: boolean,
@@ -9,12 +15,13 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
   setGroups: React.Dispatch<React.SetStateAction<{ id: number; name: string; users: { id: number; username: string; avatar_url: string; }[]; }[]>>
   groups: { id: number; name: string; users: { id: number; username: string; avatar_url: string; }[]; }[]
 }>) {
-  const [errors, setErrors] = useState("");
   const {user} = useContext(AuthContext);
   const [users, setUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
   const [selected, setSelected] = useState(users[0])
   const [selectedUsers, setSelectedUsers] = useState([{id: 0, username: "", avatar_url: ""}]);
   const cancelButtonRef = useRef(null)
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
+
   useEffect(() => {
     init()
   }, [""]);
@@ -31,19 +38,14 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
         localStorage.removeItem('token');
       }
       console.log(errors);
-      setErrors(error.response?.data?.error);
     });
   }
-  let handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const target = e.target as typeof e.target & {
-      name: { value: string };
-    };
+  const onSubmit: SubmitHandler<FormValues> = (data) =>  {
     fetch(import.meta.env.VITE_API_ENDPOINT + '/api/groups',
       {
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({name: target.name.value, users: selectedUsers})
+        body: JSON.stringify({name: data.name, users: selectedUsers})
       }
     ).then(res => res.json()
     ).then(data => {
@@ -54,7 +56,6 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
       setOpen(false);
     }).catch((error) => {
       console.log(error);
-      setErrors(error.response?.data?.error);
     });
   }
 
@@ -81,8 +82,11 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
     if (selectedUsers.find(item => item.id === selected.id) === undefined) {
       setSelectedUsers([...selectedUsers, selected]);
     }
-
   }
+
+  const handleUsersValidation = () => {
+    return selectedUsers.length > 0;
+  };
 
   function userList() {
     return (
@@ -173,7 +177,7 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
             >
               <Dialog.Panel
                 className="relative transform rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <form onSubmit={handleSubmit} method="post"
+                <form onSubmit={handleSubmit(onSubmit)} method="post"
                       className="mx-auto max-w-xl mt-4">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
@@ -185,9 +189,12 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
                           <label
                             className="block tsext-sm font-semibold leading-6 text-gray-900 ">
                             Name:{' '}
-                            <input type="text" name="name"
-                                   className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                            <input
+                              type="text"
+                              {...register("name", { required: true })}
+                              className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                           </label>
+                          {errors.name && <span className="text-red-500">A name is required</span>}
                           <label
                             className="block text-sm font-semibold leading-6 text-gray-900">
                             Users:
@@ -196,10 +203,13 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
                             <div className="absolute inset-y-0 right-0 flex items-center">
                               <input type={'button'} onClick={addUser}
                                      className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 hover:bg-gray-100"
-                                     value="Add"/>
+                                     value="Add"
+                                     {...register("users", { required: true, validate: handleUsersValidation })}
+                              />
                             </div>
                           </div>
                           </label>
+                          {errors.users && <span className="text-red-500">A minimum of 1 user should be selected</span>}
                           {displayUsers()}
 
                         </div>
