@@ -2,6 +2,5 @@
 mode: Mainline
 branches:
   master:
-    regex: ^latest$
     mode: ContinuousDeployment
     tag: ''
