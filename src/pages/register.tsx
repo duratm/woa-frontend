@@ -56,19 +56,21 @@ function Register() {
     return score >= 3;
   };
 
+
   const onSubmit :SubmitHandler<FormValues> = async (data) => {
     try {
-      const formData = {...data, avatarUrl: data.avatarUrl[0]}
+      const formData = {username: data.username, password: data.password, email: data.email, avatarUrl: data.avatarUrl[0]}
+      console.log(formData)
       const response = await axios.post(
         `${import.meta.env.VITE_API_ENDPOINT}/auth`,
         formData,
-        { withCredentials: true }
+        { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
       );
       setUser({
         username: response.data.username,
         avatarUrl: response.data.avatarUrl,
         email: response.data.email,
-        isAuth: true
+        isAuth: false
       });
       navigate("/");
     } catch (error :any) {
