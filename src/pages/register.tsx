@@ -1,6 +1,6 @@
 import {ChangeEvent, SetStateAction, useContext, useEffect, useState} from "react";
 import axios from "axios";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {AuthContext} from "../contexts/auth.tsx";
 import {SubmitHandler, useForm} from "react-hook-form";
 import zxcvbn from 'zxcvbn'
@@ -17,7 +17,6 @@ const isValidEmail = (email: string) =>
   );
 
 function Register() {
-  const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [avatarURL, setAvatarURL] = useState("")
   const {setUser} = useContext(AuthContext);
@@ -57,23 +56,22 @@ function Register() {
 
 
   const onSubmit :SubmitHandler<FormValues> = async (data) => {
-    try {
-      const formData = {username: data.username, password: data.password, email: data.email, avatarUrl: data.avatarUrl[0]}
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/auth`,
-        formData,
-        { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+    const formData = {username: data.username, password: data.password, email: data.email, avatarUrl: data.avatarUrl[0]};
+    await axios.post(
+      `${import.meta.env.VITE_API_ENDPOINT}/auth`,
+      formData,
+      { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
+    ).then((response) => {
       setUser({
         username: response.data.username,
-        avatarUrl: response.data.avatarUrl,
+        avatar_url: response.data.avatar_url,
+        id: response.data.id,
         email: response.data.email,
-        isAuth: false
+        isAuth: true
       });
-      navigate("/");
-    } catch (error :any) {
+    }).catch((error) => {
       setMessage(error.response?.data?.error === "email" ? "Email already used" : "Username already used") ;
-    }
+    });
   };
   const validateImageFile = (file: FileList) => {
     if (!file[0]) return true;

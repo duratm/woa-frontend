@@ -10,7 +10,7 @@ function classNames(...classes: string[]) {
 }
 
 const NavBar = () => {
-  const profileItems = [{name: "Profile", link: "/profile"}, {name: "Settings", link: "/settings"}, {
+  const profileItems = [{name: "Profile", link: "/profile"}, {name: "Settings", link: "/"}, {
     name: "Logout",
     link: "/logout"
   }]
