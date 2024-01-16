@@ -64,7 +64,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
       resData.borrowers = data.users.map(item => {
         return {id: item.userId, amount: item.amount, is_paid: false}
       })
-      setGroup({...group, expenses: [...group.expenses, resData]})
+      setGroup({...group, expenses: [resData, ...group.expenses]})
       setOpen(false);
     }).catch((error) => {
       sweetalert2.default.fire({

@@ -55,7 +55,7 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
     ).then(data => {
       data.users = selectedUsers;
       data.users = [...data.users, user]
-      setGroups([...groups, data]);
+      setGroups([data, ...groups]);
       setOpen(false);
     }).catch((error) => {
       sweetalert2.default.fire({

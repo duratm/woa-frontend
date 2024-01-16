@@ -19,6 +19,7 @@ function Home() {
     fetch(import.meta.env.VITE_API_ENDPOINT+'/api/groups', {method: 'GET', credentials: 'include'}
     ).then(res => res.json()
     ).then(data => {
+      data.sort((a: { id: number; }, b: { id: number; }) => (a.id < b.id) ? 1 : -1);
       setGroups(data);
     }).catch((error) => {
       sweetalert2.default.fire({
@@ -40,7 +41,7 @@ function Home() {
     <>
       <div className="from-primary to-tertiary bg-gradient-to-bl h-screen overflow-hidden">
         <div className="flex flex-col items-center h-full mt-20 overflow-x-scroll pb-40">
-          {groups.map(group =>
+          {groups.length > 0 ? groups.map(group =>
             <button key={group.id} onClick={display(group.id)}
                     className="flex p-6 justify-between sm:rounded-3xl w-full bg-primary hover:bg-secondary sm:w-3/4 mb-2 sm:py-5 sm:mt-5 sm:mb-5 h-min shadow-xl">
               <div className="flex flex-col min-w-0">
@@ -59,7 +60,7 @@ function Home() {
                   })}
                 </div>
               </div>
-            </button>)}
+            </button>) : <p className="text-2xl text-center">You don't have any group yet</p>}
         </div>
         <div className="absolute inset-x-0 bottom-0">
           <button className="h-20 w-full text-center items-center bg-secondary" onClick={() => {

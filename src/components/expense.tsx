@@ -56,9 +56,9 @@ function Expense() {
               <div className="flex flex-row items-center">
                 <img src={groupUsers.find(groupUser => groupUser.id === borrower.id)?.avatar_url}
                      alt="user_avatar" className="w-10 h-10 rounded-full mr-3"/>
-                <p>{groupUsers.find(groupUser => groupUser.id === borrower.id)?.username}</p>
+                <p className="truncate">{groupUsers.find(groupUser => groupUser.id === borrower.id)?.username}</p>
               </div>
-              <button>{borrower.is_paid ? "paid" : "not paid"}</button>
+              <p className="truncate">{borrower.is_paid ? "paid" : "not paid"}</p>
               <p>{borrower.amount}</p>
             </div>
           )}
