@@ -19,7 +19,6 @@ export default function AuthProvider({children}: PropsWithChildren<{}>) {
   useEffect(() => {
     async function getUser() {
       const user = await hasAuthenticated()
-      console.log(user)
       setUser(user)
       if (user.email !== "") {
         setUser({...user, isAuth: true})

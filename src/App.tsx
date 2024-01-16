@@ -11,6 +11,7 @@ import Group from "./contexts/group.tsx";
 import {groupUserAPI} from "./services/groupUserAPI.ts";
 import AuthProvider from "./contexts/auth.tsx";
 import {groupAPI} from "./services/groupAPI.tsx";
+import profile from "./components/profile.tsx";
 
 export default function AppNav() {
   const [groupUsers, setGroupUsers] = useState(groupUserAPI);
@@ -27,6 +28,7 @@ export default function AppNav() {
                 <Route path="expense/:id" Component={expense}/>
               </Route>
               <Route path="/register" Component={register}/>
+              <Route path="/profile" Component={profile}/>
               <Route path="/login" Component={login}/>
             </Routes>
           </BrowserRouter>

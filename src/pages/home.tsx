@@ -3,9 +3,9 @@ import {useNavigate} from "react-router-dom";
 import GroupUsers from "../contexts/groupUsers.ts";
 import {AuthContext} from "../contexts/auth.tsx";
 import RegisterGroup from "../components/registerGroup.tsx";
+import * as sweetalert2 from "sweetalert2";
 
 function Home() {
-  const [errors, setErrors] = useState("");
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
   const [groups, setGroups] = useState([{id: 0, name: "", users: [{id: 0, username: "", avatar_url: ""}]}]);
   const {setGroupUsers} = useContext(GroupUsers)
@@ -19,11 +19,13 @@ function Home() {
     fetch(import.meta.env.VITE_API_ENDPOINT+'/api/groups', {method: 'GET', credentials: 'include'}
     ).then(res => res.json()
     ).then(data => {
-      console.log(data);
       setGroups(data);
     }).catch((error) => {
-      console.log(error);
-      setErrors(error.response?.data?.error);
+      sweetalert2.default.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.text,
+      })
     });
   }
 
@@ -66,7 +68,6 @@ function Home() {
           </button>
         </div>
       </div>
-      <p>{errors}</p>
       <RegisterGroup open={openCreateGroup} setOpen={setOpenCreateGroup} setGroups={setGroups} groups={groups}/>
     </>
   )

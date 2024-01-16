@@ -4,6 +4,7 @@ import {CheckIcon, TrashIcon} from '@heroicons/react/20/solid'
 import GroupUsers from "../contexts/groupUsers.ts";
 import {AuthContext} from "../contexts/auth.tsx";
 import {SubmitHandler, useFieldArray, useForm} from "react-hook-form";
+import * as sweetalert2 from "sweetalert2";
 
 type FormValues = {
   name: string;
@@ -48,7 +49,6 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) =>  {
-    console.log(data);
     fetch(import.meta.env.VITE_API_ENDPOINT + '/api/expenses',
       {
         method: 'POST',
@@ -61,16 +61,17 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
       }
     ).then(res => res.json()
     ).then(resData => {
-      console.log("important");
-      console.log(data);
       resData.borrowers = data.users.map(item => {
         return {id: item.userId, amount: item.amount, is_paid: false}
       })
       setGroup({...group, expenses: [...group.expenses, resData]})
-      console.log(group);
       setOpen(false);
     }).catch((error) => {
-      console.log(error);
+      sweetalert2.default.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.text,
+      })
     });
   }
 
@@ -97,11 +98,9 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
   }
 
   function addUser() {
-    console.log(selected)
     if (fields.find(item => item.userId === selected.id) === undefined && selected.id !== -1) {
       const select = {username: selected.username, avatar_url: selected.avatar_url, userId: selected.id, amount: 0}
       append(select);
-      console.log(fields);
     }
   }
 

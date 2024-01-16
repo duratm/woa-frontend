@@ -3,6 +3,7 @@ import {Dialog, Listbox, Transition} from '@headlessui/react'
 import {CheckIcon} from '@heroicons/react/20/solid'
 import {AuthContext} from "../contexts/auth.tsx";
 import {SubmitHandler, useForm} from "react-hook-form";
+import * as sweetalert2 from "sweetalert2";
 
 type FormValues = {
   name: string;
@@ -29,7 +30,6 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
     fetch(import.meta.env.VITE_API_ENDPOINT + '/api/users', {method: 'GET', credentials: 'include'}
     ).then(res => res.json()
     ).then(data => {
-      console.log(data);
       setUsers(data);
       setSelected(data[0]);
       setSelectedUsers(selectedUsers.filter(item => item.id !== 0));
@@ -37,7 +37,11 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
       if (error.response?.status === 401) {
         localStorage.removeItem('token');
       }
-      console.log(errors);
+      sweetalert2.default.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.text,
+      })
     });
   }
   const onSubmit: SubmitHandler<FormValues> = (data) =>  {
@@ -49,13 +53,16 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
       }
     ).then(res => res.json()
     ).then(data => {
-      console.log(data);
       data.users = selectedUsers;
       data.users = [...data.users, user]
       setGroups([...groups, data]);
       setOpen(false);
     }).catch((error) => {
-      console.log(error);
+      sweetalert2.default.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.text,
+      })
     });
   }
 

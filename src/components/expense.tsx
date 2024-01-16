@@ -3,6 +3,7 @@ import {useContext} from "react";
 import GroupUsers from "../contexts/groupUsers.ts";
 import {AuthContext} from "../contexts/auth.tsx";
 import Group from "../contexts/group.tsx";
+import * as sweetalert2 from "sweetalert2";
 
 function Expense() {
   const {groupUsers} = useContext(GroupUsers)
@@ -20,12 +21,15 @@ function Expense() {
         credentials: "include",
       }
     ).then(res => res
-    ).then(data => {
-      console.log(data);
+    ).then(() => {
       setGroup({...group ,expenses: group.expenses.filter((expense: { id: number; }) => expense.id !== id)});
       navigate("/groupHome/"+group.id)
     }).catch((error) => {
-      console.log(error);
+      sweetalert2.default.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.response.data.text,
+      })
     });
   }
 

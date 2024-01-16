@@ -10,15 +10,6 @@ function classNames(...classes: string[]) {
 }
 
 const NavBar = () => {
-  const computerStyle = {
-    currentNavStyle: "bg-secondary text-quaternary rounded-md px-3 py-2 text-sm font-medium",
-    navStyle: "text-tertiary hover:bg-quaternary hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-  }
-  const mobileStyle = {
-    currentNavStyle: "bg-secondary text-quaternary block rounded-md px-3 py-2 text-base font-medium",
-    navStyle: "text-tertiary hover:bg-quaternary hover:text-white block rounded-md px-3 py-2 text-base font-medium"
-  }
-  const navItems: any[] = []
   const profileItems = [{name: "Profile", link: "/profile"}, {name: "Settings", link: "/settings"}, {
     name: "Logout",
     link: "/logout"
@@ -41,26 +32,8 @@ const NavBar = () => {
       {withCredentials: true}
     ).then(() => {
       setUser({username: "", avatar_url: "", email: "", isAuth: false})
-    }).catch((error: any) => {
-      console.log(error);
+    }).catch(() => {
     });
-  }
-
-  function navButton(displayType: string) {
-    return navItems.map((item) => {
-      if (displayType === "computer") {
-        return <button key={item.name}
-                       className={currentNav === item.name ? computerStyle["currentNavStyle"] : computerStyle["navStyle"]}
-                       onClick={() => {
-                         setCurrentNav(item.name)
-                       }}>{item.name}</button>
-      }
-      return <button key={item.name}
-                     className={currentNav === item.name ? mobileStyle["currentNavStyle"] : mobileStyle["navStyle"]}
-                     onClick={() => {
-                       setCurrentNav(item.name)
-                     }}>{item.name}</button>
-    })
   }
 
   function profileButton() {
@@ -146,11 +119,6 @@ const NavBar = () => {
                       src="/logo.svg"
                       alt="Your Company"/>
                   </div>
-                  <div className="hidden sm:ml-6 sm:block">
-                    <div className="flex space-x-4">
-                      {navButton("computer")}
-                    </div>
-                  </div>
                 </div>
                 <div
                   className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -159,14 +127,6 @@ const NavBar = () => {
                 </div>
               </div>
             </div>
-
-            <Disclosure.Panel className="sm:hidden">
-              <div className="space-y-1 px-2 pb-3 pt-2">
-                {navButton("mobile")}
-              </div>
-            </Disclosure.Panel>
-
-
           </>
         )}
       </Disclosure>

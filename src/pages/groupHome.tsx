@@ -8,6 +8,7 @@ import LentList from "../components/lentList.tsx";
 import {AuthContext} from "../contexts/auth.tsx";
 import RegisterExpense from "../components/registerExpense.tsx";
 import Group from "../contexts/group.tsx";
+import * as sweetalert2 from "sweetalert2";
 
 
 function classNames(...classes: string[]) {
@@ -15,7 +16,6 @@ function classNames(...classes: string[]) {
 }
 
 function GroupHome() {
-  const [errors, setErrors] = useState("");
   const [openBorrowed, setOpenBorrowed] = useState(false);
   const [openLent, setOpenLent] = useState(false);
   const {groupUsers, setGroupUsers} = useContext(GroupUsers)
@@ -40,12 +40,14 @@ function GroupHome() {
         }
       ).then(res => res.json()
       ).then(data => {
-        console.log(data);
         setGroup(data.groups);
         setGroupUsers(data.users);
       }).catch((error) => {
-        console.log(errors);
-        setErrors(error.response?.data?.error);
+        sweetalert2.default.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error.response.data.text,
+        })
       });
     }else{
       fetch(import.meta.env.VITE_API_ENDPOINT + '/api/groups/show/' + params.id, {
@@ -55,10 +57,12 @@ function GroupHome() {
       ).then(res => res.json()
       ).then(data => {
         setGroup(data);
-        console.log(group);
       }).catch((error) => {
-        console.log(errors);
-        setErrors(error.response?.data?.error);
+        sweetalert2.default.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: error.response.data.text,
+        })
       });
     }
   }
