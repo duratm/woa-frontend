@@ -11,7 +11,7 @@ import Group from "./contexts/group.tsx";
 import {groupUserAPI} from "./services/groupUserAPI.ts";
 import AuthProvider from "./contexts/auth.tsx";
 import {groupAPI} from "./services/groupAPI.tsx";
-import profile from "./components/profile.tsx";
+import profile from "./pages/profile.tsx";
 
 export default function AppNav() {
   const [groupUsers, setGroupUsers] = useState(groupUserAPI);
