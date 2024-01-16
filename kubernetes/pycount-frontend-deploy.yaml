@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: pycount-frontend
-          image: 'duratm/pycount-frontend:2.0.0-alpha.1'
+          image: 'duratm/pycount-frontend:1.1.0-alpha.1'
           imagePullPolicy: "Always"
           ports:
             - name: frontend
