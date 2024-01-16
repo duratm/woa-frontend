@@ -1,45 +1,67 @@
-import React, {Fragment, useContext, useState} from "react";
+import React, {Fragment, useContext, useEffect, useState} from "react";
 import {Dialog, Transition} from '@headlessui/react'
 import GroupUsers from "../contexts/groupUsers.ts";
 import {AuthContext} from "../contexts/auth.tsx";
+import {useFieldArray, useForm} from "react-hook-form";
+import Group from "../contexts/group.tsx";
 
-function BorrowedList({open, setOpen, expenses}: Readonly<{
-  open: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+type FormValues = {
   expenses: {
     id: any;
     name: string;
     lender_id: number;
     borrowers: { id: number; amount: number; is_paid: boolean; }[];
   }[]
-}>) {
+}
+function BorrowedList({open, setOpen}: Readonly<{
+  open: boolean,
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  }>) {
   const {user} = useContext(AuthContext);
   const [paid, setPaid] = useState(false);
   const {groupUsers} = useContext(GroupUsers)
+  const {group} = useContext(Group);
+  const { control, register, reset, handleSubmit } = useForm<FormValues>({defaultValues: {expenses: group.expenses}});
+  const { fields } = useFieldArray({
+    control,
+    name: "expenses",
+  });
 
-  function paidList(expenses: {
-    id: any;
-    name: string;
-    lender_id: number;
-    borrowers: { id: number; amount: number; is_paid: boolean; }[];
-  }[]) {
+  useEffect(() => {
+    reset({expenses: group.expenses})
+  }, [group.expenses]);
+
+  const onSubmit = (data: FormValues) => {
+    const formValues = {groupId: group.id, expenses: data.expenses}
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/api/expenses', {
+      method: 'PATCH',
+      credentials: 'include',
+      body: JSON.stringify(formValues),
+    })
+  }
+
+  function paidList() {
     return (
       <>
       <div className="flex flex-row justify-between">
-        <p>why</p>
-        <p>who</p>
-        <p>amount</p>
+        <p className="w-5/12 trucate">why</p>
+        <p className="w-4/12 trucate">who</p>
+        <p className="w-2/12 trucate">amount</p>
+        <p className="w-1/12 trucate">paid</p>
       </div>
-      {expenses.map(expense => {
+        {fields.map((expense, indexe) => {
         if (user.id !== expense.lender_id) {
           return <>
-            {expense.borrowers.map(borrower => {
-              if (borrower.is_paid) {
+            {expense.borrowers.map((borrower, indexb) => {
+              if (borrower.is_paid && borrower.id === user.id) {
                 return (
-                  <div key={expense.id + borrower.id } className="flex flex-row justify-between">
-                    <p>{expense.name}</p>
-                    <p>{groupUsers.find(groupUser => groupUser.id === borrower.id)?.username}</p>
-                    <p>{borrower.amount}</p>
+                  <div key={expense.id + borrower.id} className="flex flex-row justify-between">
+                    <p className="w-5/12 trucate">{expense.name}</p>
+                    <p className="w-4/12 trucate">{groupUsers.find(groupUser => groupUser.id === expense.lender_id)?.username}</p>
+                    <p className="w-2/12 trucate">{borrower.amount}</p>
+                    <input type="checkbox" className="w-1/12 trucate"
+                           {...register(`expenses.${indexe}.borrowers.${indexb}.is_paid`)}
+                    />
                   </div>
                 )
               }
@@ -51,29 +73,28 @@ function BorrowedList({open, setOpen, expenses}: Readonly<{
     )
   }
 
-  function notPaidList(expenses: {
-    id: any;
-    name: string;
-    lender_id: number;
-    borrowers: { id: number; amount: number; is_paid: boolean; }[];
-  }[]) {
+  function notPaidList() {
     return (
       <>
         <div className="flex flex-row justify-between">
-          <p>why</p>
-          <p>who</p>
-          <p>amount</p>
+          <p className="w-5/12 trucate">why</p>
+          <p className="w-4/12 trucate">who</p>
+          <p className="w-2/12 trucate">amount</p>
+          <p className="w-1/12 trucate">paid</p>
         </div>
-        {expenses.map(expense => {
+        {fields.map((expense, indexe) => {
           if (user.id !== expense.lender_id) {
             return <>
-              {expense.borrowers.map(borrower => {
-                if (!borrower.is_paid) {
+              {expense.borrowers.map((borrower, indexb) => {
+                if (!borrower.is_paid && borrower.id === user.id) {
                   return (
                     <div key={expense.id + borrower.id} className="flex flex-row justify-between">
-                      <p>{expense.name}</p>
-                      <p>{groupUsers.find(groupUser => groupUser.id === borrower.id)?.username}</p>
-                      <p>{borrower.amount}</p>
+                      <p className="w-5/12 trucate">{expense.name}</p>
+                      <p className="w-4/12 trucate">{groupUsers.find(groupUser => groupUser.id === expense.lender_id)?.username}</p>
+                      <p className="w-2/12 trucate">{borrower.amount}</p>
+                      <input type="checkbox" className="w-1/12 trucate"
+                             {...register(`expenses.${indexe}.borrowers.${indexb}.is_paid`)}
+                      />
                     </div>
                   )
                 }
@@ -139,32 +160,34 @@ function BorrowedList({open, setOpen, expenses}: Readonly<{
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl w-full transition-all sm:my-8 sm:w-1/3">
-                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 w-full">
-                  <div className="sm:flex sm:items-start">
-                    <div className="text-center sm:mt-0 sm:text-left w-full">
-                      <Dialog.Title as="h1" className="flex flex-row justify-between font-bold pb-4">
-                        <p>Borrowed List</p>
-                        {togglePaid()}
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        {paid ? paidList(expenses) : notPaidList(expenses)}
+                className="relative transform rounded-lg bg-white text-left w-full sm:max-w-[800px] shadow-xl transition-all">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 w-full">
+                    <div className="sm:flex sm:items-start">
+                      <div className="text-center sm:mt-0 sm:text-left w-full">
+                        <Dialog.Title as="h1" className="flex flex-row justify-between font-bold pb-4">
+                          <p>Borrowed List</p>
+                          {togglePaid()}
+                        </Dialog.Title>
+                        <div className="mt-2">
+                          {paid ? paidList() : notPaidList()}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <input type="submit" value="Create"
-                         className="block w-full rounded-md bg-primary px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"/>
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center text-quaternary rounded-md bg-none px-3 py-2 text-sm font-semibold border-2 border-tertiary shadow-sm hover:bg-primary sm:mr-3 sm:w-auto"
-                    onClick={() => setOpen(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <input type="submit" value="Apply"
+                           className="block w-full rounded-md bg-primary px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"/>
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center text-quaternary rounded-md bg-none px-3 py-2 text-sm font-semibold border-2 border-tertiary shadow-sm hover:bg-primary sm:mr-3 sm:w-auto"
+                      onClick={() => setOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </Dialog.Panel>
             </Transition.Child>
           </div>

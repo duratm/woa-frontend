@@ -71,14 +71,14 @@ function GroupHome() {
     const borrowed = group.expenses.map((a) => {
       if (id !== a.lender_id) {
         return a.borrowers.map((a) => {
-          if (a.id == id) {
+          if (a.id == id && a.is_paid === false) {
             return a.amount
           }
         }).reduce((acum,obj)=> {return (acum ?? 0) + (obj ?? 0)})
       }}).reduce((acum,obj)=> {return (acum ?? 0) + (obj ?? 0)})
     const lent = group.expenses.map((a) => {
       if (id == a.lender_id && a.borrowers.length > 0) {
-        return a.borrowers.map(exp => exp.amount).reduce((acum,obj)=> {return (acum ?? 0) + (obj ?? 0)})
+        return a.borrowers.map(exp => exp.is_paid ? 0 : exp.amount).reduce((acum,obj)=> {return (acum ?? 0) + (obj ?? 0)})
       }
     }).reduce((acum,obj)=> {return (acum ?? 0) + (obj ?? 0)})
     const total = (lent ?? 0 ) - (borrowed ?? 0)
@@ -169,8 +169,8 @@ function GroupHome() {
           </button>
         </div>
       </div>
-      <BorrowedList open={openBorrowed} setOpen={setOpenBorrowed} expenses={group.expenses}/>
-      <LentList open={openLent} setOpen={setOpenLent} expenses={group.expenses}/>
+      <BorrowedList open={openBorrowed} setOpen={setOpenBorrowed}/>
+      <LentList open={openLent} setOpen={setOpenLent}/>
       <RegisterExpense open={openCreateExpense} setOpen={setOpenCreateExpense} group={group} setGroup={setGroup}/>
 
     </div>
