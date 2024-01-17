@@ -38,14 +38,14 @@ function GroupHome() {
         }
       ).then(res => res.json()
       ).then(data => {
-        data.groups.expenses = data.groups.expenses.sort((a: { id: number; }, b: { id: number; }) => (a.id < b.id) ? 1 : -1);
+        data.groups.expenses.sort((a: { id: number; }, b: { id: number; }) => (a.id < b.id) ? 1 : -1);
         setGroup(data.groups);
         setGroupUsers(data.users);
       }).catch((error) => {
         sweetalert2.default.fire({
           icon: 'error',
           title: 'Oops...',
-          text: error.response.data.text,
+          text: error,
         })
       });
     }else{
@@ -55,13 +55,13 @@ function GroupHome() {
         }
       ).then(res => res.json()
       ).then(data => {
-        data.groups.expenses = data.groups.expenses.sort((a: { id: number; }, b: { id: number; }) => (a.id < b.id) ? 1 : -1);
+        data.expenses.sort((a: { id: number; }, b: { id: number; }) => (a.id < b.id) ? 1 : -1);
         setGroup(data);
       }).catch((error) => {
         sweetalert2.default.fire({
           icon: 'error',
           title: 'Oops...',
-          text: error.response.data.text,
+          text: error,
         })
       });
     }
@@ -87,7 +87,7 @@ function GroupHome() {
 
   function displayButtons() {
     return (
-      <div className="flex flex-row w-[170px] h-1/2">
+      <div className="flex flex-row w-min-[170px] w-1/2 h-1/2">
         <button className="border-tertiary border rounded-md w-1/2" onClick={() => setOpenBorrowed(true)}>Borrowed</button>
         <button className="border-tertiary border rounded-md w-1/2" onClick={() => setOpenLent(true)}>Lent</button>
       </div>
