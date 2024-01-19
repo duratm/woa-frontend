@@ -4,9 +4,13 @@ import GroupUsers from "../contexts/groupUsers.ts";
 import {AuthContext} from "../contexts/auth.tsx";
 import RegisterGroup from "../components/registerGroup.tsx";
 import * as sweetalert2 from "sweetalert2";
+import {Cog6ToothIcon} from "@heroicons/react/24/outline";
+import GroupSettings from "../components/groupSettings.tsx";
 
 function Home() {
   const [openCreateGroup, setOpenCreateGroup] = useState(false);
+  const [openGroupSettings, setOpenGroupSettings] = useState(false);
+  const [currentGroup, setCurrentGroup] = useState(-1);
   const [groups, setGroups] = useState([{id: 0, name: "", users: [{id: 0, username: "", avatar_url: ""}]}]);
   const {setGroupUsers} = useContext(GroupUsers)
   useEffect(() => {
@@ -42,9 +46,9 @@ function Home() {
       <div className="from-primary to-tertiary bg-gradient-to-bl h-screen overflow-hidden">
         <div className="flex flex-col items-center h-full mt-20 overflow-x-scroll pb-40">
           {groups.length > 0 ? groups.map(group =>
-            <button key={group.id} onClick={display(group.id)}
-                    className="flex p-6 justify-between sm:rounded-3xl w-full bg-primary hover:bg-secondary sm:w-3/4 mb-2 sm:py-5 sm:mt-5 sm:mb-5 h-min shadow-xl">
-              <div className="flex flex-col min-w-0">
+            <div key={group.id}
+                 className="flex justify-between sm:rounded-3xl w-full flex-row bg-primary sm:w-3/4 mb-2 sm:mt-5 sm:mb-5 h-min shadow-xl">
+              <div className="flex sm:py-5 p-6 flex-col hover:bg-secondary sm:rounded-3xl h-full w-full min-w-0" onClick={display(group.id)}>
                 <div className="min-w-0">
                   <p
                     className="text-sm font-semibold leading-6 text-gray-900 first-letter:uppercase">{group.name}</p>
@@ -60,7 +64,11 @@ function Home() {
                   })}
                 </div>
               </div>
-            </button>) : <p className="text-2xl text-center">You don't have any group yet</p>}
+              <div className="flex sm:py-5 p-6 flex-row items-center">
+                <button onClick={() => {setCurrentGroup(group.id)
+                  setOpenGroupSettings(true)}}><Cog6ToothIcon className="h-10 w-10 text-white"/></button>
+              </div>
+            </div>) : <p className="text-2xl text-center">You don't have any group yet</p>}
         </div>
         <div className="absolute inset-x-0 bottom-0">
           <button className="h-20 w-full text-center items-center bg-secondary" onClick={() => {
@@ -70,6 +78,7 @@ function Home() {
         </div>
       </div>
       <RegisterGroup open={openCreateGroup} setOpen={setOpenCreateGroup} setGroups={setGroups} groups={groups}/>
+      <GroupSettings open={openGroupSettings} setOpen={setOpenGroupSettings} id={currentGroup} setGroups={setGroups} groups={groups}/>
     </>
   )
 }
