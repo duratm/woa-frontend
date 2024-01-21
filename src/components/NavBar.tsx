@@ -1,5 +1,4 @@
 import {Disclosure, Menu, Transition} from "@headlessui/react";
-import {Bars3Icon, XMarkIcon} from "@heroicons/react/24/outline";
 import {Fragment, useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
@@ -10,7 +9,7 @@ function classNames(...classes: string[]) {
 }
 
 const NavBar = () => {
-  const profileItems = [{name: "Profile", link: "/profile"}, {name: "Settings", link: "/"}, {
+  const profileItems = [{name: "Profile", link: "/profile"}, {
     name: "Logout",
     link: "/logout"
   }]
@@ -19,12 +18,12 @@ const NavBar = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!user.isAuth) {
-      navigate("/login");
+      navigate("/home");
     } else {
-      navigate("/")
+      navigate("/");
     }
-
   }, [user.isAuth]);
+
 
   function logout() {
     axios.get(
@@ -94,43 +93,26 @@ const NavBar = () => {
   if (user.isAuth) {
     return (
       <Disclosure as="nav" className="bg-none backdrop-blur-sm absolute w-full">
-        {({open}) => (
-          <>
-            <div className="mx-auto px-2 sm:px-6 lg:px-8">
-              <div className="relative flex h-16 items-center justify-between">
-                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                  {/* Mobile menu button*/}
-                  <Disclosure.Button
-                    className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                    <span className="absolute -inset-0.5"/>
-                    <span className="sr-only">Open main menu</span>
-                    {open ? (
-                      <XMarkIcon className="block h-6 w-6" aria-hidden="true"/>
-                    ) : (
-                      <Bars3Icon className="block h-6 w-6" aria-hidden="true"/>
-                    )}
-                  </Disclosure.Button>
-                </div>
-                <div
-                  className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="flex flex-shrink-0 items-center">
-                    <Link to="/">
-                      <img
+          <div className="mx-auto px-2 sm:px-6 lg:px-8">
+            <div className="relative flex h-16 items-center justify-between">
+              <div
+                className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <div className="flex flex-shrink-0 items-center">
+                  <Link to="/">
+                    <img
                       className="h-8 w-auto"
                       src="/logo.svg"
                       alt="Your Company"/>
-                    </Link>
-                  </div>
-                </div>
-                <div
-                  className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                  {/* Profile dropdown */}
-                  {profileButton()}
+                  </Link>
                 </div>
               </div>
+              <div
+                className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                {/* Profile dropdown */}
+                {profileButton()}
+              </div>
             </div>
-          </>
-        )}
+          </div>
       </Disclosure>
     )
   }

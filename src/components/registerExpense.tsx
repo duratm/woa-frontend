@@ -70,7 +70,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }
@@ -84,15 +84,16 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
           <input
             className={errors?.users?.[index]?.amount ? "block w-1/4 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-red-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" : "block w-1/4 rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}
             type="number"
+            step="0.01"
             placeholder="Amount"
-            {...register(`users.${index}.amount` , { required: true, valueAsNumber: true, min: 1 })}
+            {...register(`users.${index}.amount` , { required: true, valueAsNumber: true, min: 0.01 })}
           />
 
           <button onClick={() => remove(index)}><TrashIcon className="w-8 text-red-500"/></button>
         </div>
       )}
       {errors.users && fields.length > 0 && (
-        <span className="text-red-500">Amounts must be greater than 1</span>
+        <span className="text-red-500">Amounts must be greater than 0</span>
       )}
     </div>
   }
@@ -192,7 +193,7 @@ function RegisterExpense({open, setOpen, group, setGroup}: Readonly<{
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel
-                className="relative transform rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                className="relative transform rounded-lg bg-white text-left w-full sm:w-[800px] shadow-xl transition-all">
                 <form onSubmit={handleSubmit(onSubmit)} method="post"
                       className="mx-auto max-w-xl mt-4">
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">

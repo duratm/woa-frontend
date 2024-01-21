@@ -21,7 +21,7 @@ function LentList({open, setOpen}: Readonly<{
   const {user} = useContext(AuthContext);
   const [paid, setPaid] = useState(false);
   const {groupUsers} = useContext(GroupUsers)
-  const {group} = useContext(Group);
+  const {group, setGroup} = useContext(Group);
   const { control, register, reset, handleSubmit } = useForm<FormValues>({defaultValues: {expenses: group.expenses}});
   const { fields } = useFieldArray({
     control,
@@ -38,7 +38,10 @@ function LentList({open, setOpen}: Readonly<{
       method: 'PATCH',
       credentials: 'include',
       body: JSON.stringify(formValues),
-    })
+    }).then(() => {
+      setGroup({...group, expenses: formValues.expenses})
+      }
+    )
   }
   function paidList() {
     return (
@@ -51,11 +54,11 @@ function LentList({open, setOpen}: Readonly<{
         </div>
         {fields.map((expense, indexe) => {
           if (user.id === expense.lender_id) {
-            return <>
+            return <div key={expense.id}>
               {expense.borrowers.map((borrower, indexb) => {
                 if (borrower.is_paid) {
                   return (
-                    <div key={expense.id + borrower.id} className="flex flex-row justify-between">
+                    <div key={borrower.id} className="flex flex-row justify-between">
                       <p className="w-5/12 trucate">{expense.name}</p>
                       <p
                         className="w-4/12 trucate">{groupUsers.find(groupUser => groupUser.id === borrower.id)?.username}</p>
@@ -67,7 +70,7 @@ function LentList({open, setOpen}: Readonly<{
                   )
                 }
               })}
-            </>
+            </div>
           }
         })}
       </>
@@ -83,13 +86,13 @@ function LentList({open, setOpen}: Readonly<{
           <p className="w-2/12 trucate">amount</p>
           <p className="w-1/12 trucate">paid</p>
         </div>
-        {fields.map((expense, indexb) => {
+        {fields.map((expense, indexe) => {
           if (user.id === expense.lender_id) {
-            return <>
-              {expense.borrowers.map((borrower, indexe) => {
+            return <div key={expense.id}>
+              {expense.borrowers.map((borrower, indexb) => {
                 if (!borrower.is_paid) {
                   return (
-                    <div key={expense.id + borrower.id} className="flex flex-row justify-between">
+                    <div key={borrower.id} className="flex flex-row justify-between">
                       <p className="w-5/12 trucate">{expense.name}</p>
                       <p
                         className="w-4/12 trucate">{groupUsers.find(groupUser => groupUser.id === borrower.id)?.username}</p>
@@ -101,7 +104,7 @@ function LentList({open, setOpen}: Readonly<{
                   )
                 }
               })}
-            </>
+            </div>
           }
         })}
       </>)
@@ -186,7 +189,7 @@ function LentList({open, setOpen}: Readonly<{
                       className="inline-flex w-full justify-center text-quaternary rounded-md bg-none px-3 py-2 text-sm font-semibold border-2 border-tertiary shadow-sm hover:bg-primary sm:mr-3 sm:w-auto"
                       onClick={() => setOpen(false)}
                     >
-                      Cancel
+                      Close
                     </button>
                   </div>
                 </form>

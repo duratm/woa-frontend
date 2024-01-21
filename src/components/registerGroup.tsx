@@ -40,7 +40,7 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }
@@ -61,7 +61,7 @@ function RegisterGroup({open, setOpen, setGroups, groups}: Readonly<{
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }

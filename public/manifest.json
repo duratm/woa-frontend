@@ -1,0 +1,17 @@
+{
+  "name": "PYCount",
+  "short_name": "PYCount",
+  "description": "Prove your count and share it with your friends!",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "594x582",
+      "type": "image/svg"
+    }
+  ]
+}

@@ -12,29 +12,32 @@ import {groupUserAPI} from "./services/groupUserAPI.ts";
 import AuthProvider from "./contexts/auth.tsx";
 import {groupAPI} from "./services/groupAPI.tsx";
 import profile from "./pages/profile.tsx";
+import index from "./pages/index.tsx";
 
 export default function AppNav() {
   const [groupUsers, setGroupUsers] = useState(groupUserAPI);
   const [group, setGroup] = useState(groupAPI);
+
   return (
-    <AuthProvider>
-      <GroupUsers.Provider value={{groupUsers,setGroupUsers}}>
-        <Group.Provider value={{group,setGroup}}>
-          <BrowserRouter>
-            <NavBar/>
-            <Routes>
-              <Route path="/" Component={home}/>
-              <Route path="/groupHome/:id" Component={groupHome}>
-                <Route path="expense/:id" Component={expense}/>
-              </Route>
-              <Route path="/register" Component={register}/>
-              <Route path="/profile" Component={profile}/>
-              <Route path="/login" Component={login}/>
-            </Routes>
-          </BrowserRouter>
-        </Group.Provider>
-      </GroupUsers.Provider>
-    </AuthProvider>
+      <AuthProvider>
+        <GroupUsers.Provider value={{groupUsers, setGroupUsers}}>
+          <Group.Provider value={{group, setGroup}}>
+            <BrowserRouter>
+              <NavBar/>
+              <Routes>
+                <Route path="/home" Component={index}/>
+                <Route path="/" Component={home}/>
+                <Route path="/groupHome/:id" Component={groupHome}>
+                  <Route path="expense/:id" Component={expense}/>
+                </Route>
+                <Route path="/register" Component={register}/>
+                <Route path="/profile" Component={profile}/>
+                <Route path="/login" Component={login}/>
+              </Routes>
+            </BrowserRouter>
+          </Group.Provider>
+        </GroupUsers.Provider>
+      </AuthProvider>
   )
 
 }

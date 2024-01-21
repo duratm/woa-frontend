@@ -34,7 +34,6 @@ function GroupSettings({open, setOpen, id, setGroups, groups}: Readonly<{
     reset({name: group?.name, users: ""});
     const members = group?.users.filter(member => member.id !== user.id)
     setSelectedUsers( members ?? [{id: 0, username: "", avatar_url: ""}]);
-    console.log(selectedUsers)
   }, [id]);
   let init = () => {
     fetch(import.meta.env.VITE_API_ENDPOINT + '/api/users', {method: 'GET', credentials: 'include'}
@@ -50,7 +49,7 @@ function GroupSettings({open, setOpen, id, setGroups, groups}: Readonly<{
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }
@@ -73,7 +72,7 @@ function GroupSettings({open, setOpen, id, setGroups, groups}: Readonly<{
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
 
@@ -138,7 +137,7 @@ function GroupSettings({open, setOpen, id, setGroups, groups}: Readonly<{
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }

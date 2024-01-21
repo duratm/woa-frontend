@@ -28,14 +28,18 @@ function Expense() {
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }
 
     return (
       <div className="w-full">
-        <h1 className="first-letter:uppercase">{expense.name}</h1>
+        <div className="flex flex-row justify-between items-center">
+          <h1 className="first-letter:uppercase">{expense.name}</h1>
+          {user.id === expense.lender_id &&
+            <button onClick={deleteExpense} className="bg-primary text-red-600 hover:bg-secondary rounded-xl p-2">Delete</button>}
+        </div>
         <hr className="mb-2"/>
         <p>Lender</p>
         <div className="flex flex-row items-center justify-between mb-2">
@@ -63,7 +67,6 @@ function Expense() {
             </div>
           )}
         </div>
-        {user.id === expense.lender_id && <button onClick={deleteExpense} className="bg-primary hover:bg-secondary rounded-xl p-2">Delete</button>}
       </div>
     )
 }

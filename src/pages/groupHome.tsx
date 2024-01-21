@@ -146,7 +146,7 @@ function GroupHome() {
                 </div>
                 <div className="flex flex-row sm:w-3/4 truncate">
                   {expense.borrowers.map((borrower) =>
-                    <div key={borrower.id} className="flex flex-row w-3/4 items-center">
+                    <div key={borrower.id + "" + expense.id} className="flex flex-row w-3/4 items-center">
                       <img src={groupUsers.find(groupUser => groupUser.id === borrower.id)?.avatar_url}
                            alt="user_avatar"
                            className="w-10 h-10 rounded-full"/>

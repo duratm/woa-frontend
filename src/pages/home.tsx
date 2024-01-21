@@ -29,7 +29,7 @@ function Home() {
       sweetalert2.default.fire({
         icon: 'error',
         title: 'Oops...',
-        text: error.response.data.text,
+        text: error,
       })
     });
   }
