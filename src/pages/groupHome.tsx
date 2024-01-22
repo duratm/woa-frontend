@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState} from "react";
-import {Link, Outlet, useParams} from "react-router-dom";
+import {Link, Outlet, useParams, useNavigate} from "react-router-dom";
 import GroupUsers from "../contexts/groupUsers.ts";
-import {useNavigate} from "react-router-dom";
 import {ArrowLeftCircleIcon} from "@heroicons/react/24/outline";
 import BorrowedList from "../components/borrowedList.tsx";
 import LentList from "../components/lentList.tsx";
@@ -71,7 +70,7 @@ function GroupHome() {
     const borrowed = group.expenses.map((a) => {
       if (id !== a.lender_id) {
         return a.borrowers.map((a) => {
-          if (a.id == id && a.is_paid === false) {
+          if (a.id == id && !a.is_paid) {
             return a.amount
           }
         }).reduce((acum,obj)=> {return (acum ?? 0) + (obj ?? 0)})
@@ -110,7 +109,7 @@ function GroupHome() {
         <div className="flex flex-col mb-14 w-full">
           <div className="flex flex-row justify-between items-center">
           <h1 className="sm:text-5xl text-2xl font-semibold truncate w-fit mb-4 flex flex-row items-center"><Link
-            to="/"><ArrowLeftCircleIcon className="h-20"/></Link>Group {group.name}
+            to="/home"><ArrowLeftCircleIcon className="h-20"/></Link>Group {group.name}
           </h1>
           {displayButtons()}
           </div>

@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import {AuthContext} from "../contexts/auth.tsx";
@@ -15,15 +15,9 @@ const isValidEmail = (email: string) =>
   );
 export default function Login() {
   const [message, setMessage] = useState("");
-  const {setUser, user} = useContext(AuthContext);
+  const {setUser} = useContext(AuthContext);
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>();
-
-  useEffect(() => {
-    if (user.isAuth) {
-      navigate("/home");
-    }
-  }, [""])
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     axios.get(
@@ -37,7 +31,7 @@ export default function Login() {
         email: response.data.email,
         isAuth: true
       });
-      navigate("/");
+      navigate("/home");
     }).catch((error) => {
       setMessage(error.response?.data?.error);
     });

@@ -25,8 +25,8 @@ export default function AppNav() {
             <BrowserRouter>
               <NavBar/>
               <Routes>
-                <Route path="/home" Component={index}/>
-                <Route path="/" Component={home}/>
+                <Route path="/home" Component={home}/>
+                <Route path="/" Component={index}/>
                 <Route path="/groupHome/:id" Component={groupHome}>
                   <Route path="expense/:id" Component={expense}/>
                 </Route>

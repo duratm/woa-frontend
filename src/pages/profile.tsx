@@ -96,7 +96,7 @@ function Register() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md bg-primary rounded-xl p-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h1 className="sm:text-5xl text-2xl font-semibold w-fit mb-4 flex flex-row items-center"><Link
-            to="/"><ArrowLeftCircleIcon className="h-20"/></Link>Profile</h1>
+            to="/home"><ArrowLeftCircleIcon className="h-20"/></Link>Profile</h1>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

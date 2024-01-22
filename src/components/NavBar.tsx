@@ -18,9 +18,9 @@ const NavBar = () => {
   const navigate = useNavigate();
   useEffect(() => {
     if (!user.isAuth) {
-      navigate("/home");
-    } else {
       navigate("/");
+    } else {
+      navigate("/home");
     }
   }, [user.isAuth]);
 
@@ -98,7 +98,7 @@ const NavBar = () => {
               <div
                 className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <Link to="/">
+                  <Link to="/home">
                     <img
                       className="h-8 w-auto"
                       src="/logo.svg"
